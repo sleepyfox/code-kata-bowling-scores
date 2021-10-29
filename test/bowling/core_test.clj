@@ -21,3 +21,16 @@
     (let [open-frame [2 3]
           open-game  (repeat 10 open-frame)]
       (is (= 50 (score-game open-game))))))
+
+
+(deftest checking-for-spare-frame
+  (testing "A frame where the player leaves pins standing is not a spare"
+    (is (not (is-spare? [1 2]))))
+
+  (testing "A frame where the player knocks down all pins in two balls is a spare"
+    (let [spare-frame [2 8]]
+      (is (not (is-spare? spare-frame)))))
+
+  (testing "A frame where the player strikes is not a spare"
+    (let [strike-frame [10]]
+      (is (not (is-spare? strike-frame))))))
