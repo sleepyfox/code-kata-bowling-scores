@@ -6,11 +6,16 @@
   [frame]
   (reduce + frame))
 
+(defn is-strike?
+  "is this frame a strike?"
+  [frame]
+  (= 10 (first frame)))
+
 (defn is-spare?
   "is this frame a spare?"
   [frame]
-  (and (= 10 score-frame)
-       (not (= 10 (first frame)))))
+  (and (= 10 (score-frame frame))
+       (not (is-strike? frame))))
 
 (defn score-basic-game
   "total score for ten frames, absent bonuses"
@@ -19,10 +24,25 @@
        (map score-frame)
        (reduce +)))
 
+;; Idea:
+;; (def game       [[1 1] [1 1] ...]
+;; (def next-frame (conj (vec (rest game)) [0 0])
+;; (def 2nd-frame  (conj (vec (rest next-frame)) [0 0])
+
+;; Then we can have functions that map and combine these three to find
+;; the bonus scores without a horribly complex reduce fn...
+
 (defn score-spare-bonus
   "extra score for rolling a spare in a frame is the next roll"
   [game]
-  0)
+  (let [next-frame (conj (vec (rest game)) [0 0])
+        combined (partition 2 (interleave game next-frame))]
+
+    (->> combined
+         (map (fn [[a b]] (if (is-spare? a)
+                            (first b)
+                            0)))
+         (reduce +))))
 
 (defn score-game
   "Score the basic game plus spare bonus rolls"

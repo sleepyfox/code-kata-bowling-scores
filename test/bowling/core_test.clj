@@ -20,8 +20,13 @@
   (testing "A game of all opens (5) scores fifty"
     (let [open-frame [2 3]
           open-game  (repeat 10 open-frame)]
-      (is (= 50 (score-game open-game))))))
+      (is (= 50 (score-game open-game)))))
 
+  (testing "A game with a spare scores 57"
+    (let [open-frame [2 3]
+          spare-frame [2 8]
+          spare-game (concat [spare-frame] (repeat 9 open-frame))]
+      (is (= (+ 45 10 2) (score-game spare-game))))))
 
 (deftest checking-for-spare-frame
   (testing "A frame where the player leaves pins standing is not a spare"
@@ -29,8 +34,27 @@
 
   (testing "A frame where the player knocks down all pins in two balls is a spare"
     (let [spare-frame [2 8]]
-      (is (not (is-spare? spare-frame)))))
+      (is (is-spare? spare-frame))))
 
   (testing "A frame where the player strikes is not a spare"
     (let [strike-frame [10]]
       (is (not (is-spare? strike-frame))))))
+
+(deftest check-spare-bonus-score
+  (testing "A two frame match, where the first is a spare, should get a bonus"
+    (let [game [[4 6] [1 0]]]
+      (is (= 1 (score-spare-bonus game)))))
+
+  (testing "A game with two spares should get two bonuses"
+    (let [game [[4 6] [5 5] [1 1]]]
+      (is (= (+ 5 1) (score-spare-bonus game))))))
+
+(deftest checking-for-strike
+  (testing "A frame in which pins are left standing is not a strike"
+    (is (not (is-strike? [1 0]))))
+
+  (testing "A frame when ten pins are down, but not all at once is not a strike"
+    (is (not (is-strike? [5 5]))))
+
+  (testing "A strike is when all the pins are down on the first ball"
+    (is (is-strike? [10]))))
