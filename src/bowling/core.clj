@@ -32,6 +32,15 @@
 ;; Then we can have functions that map and combine these three to find
 ;; the bonus scores without a horribly complex reduce fn...
 
+(defn spare-bonus
+  "taking a pair of sequential frames,
+  if the first frame is a spare,
+  return the first ball of the second frame"
+  [[a b]]
+  (if (is-spare? a)
+    (first b)
+    0))
+
 (defn score-spare-bonus
   "extra score for rolling a spare in a frame is the next roll"
   [game]
@@ -39,10 +48,18 @@
         combined (partition 2 (interleave game next-frame))]
 
     (->> combined
-         (map (fn [[a b]] (if (is-spare? a)
-                            (first b)
-                            0)))
+         (map spare-bonus)
          (reduce +))))
+
+(defn strike-bonus
+  "taking a pair of sequential frames,
+  if the first frame is a strike,
+  return the first ball of the second frame"
+  [[a b c]]
+  (if (is-strike? a)
+    (+ (first (flatten [b c]))
+       (nth (flatten [b c]) 1))
+    0))
 
 (defn score-game
   "Score the basic game plus spare bonus rolls"

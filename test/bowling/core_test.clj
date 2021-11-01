@@ -58,3 +58,11 @@
 
   (testing "A strike is when all the pins are down on the first ball"
     (is (is-strike? [10]))))
+
+(deftest check-strike-bonus
+  (testing "A frame that is not a strike gets no bonus"
+    (is (= 0 (strike-bonus [[5 5] [2 8] [1 3]]))))
+  (testing "A frame with a strike gets the next two normal rolls as bonus"
+    (is (= 6 (strike-bonus [[10] [2 4] [5 5]]))))
+  (testing "A frame with two strikes gets the strike and the next normal roll"
+    (is (= 15 (strike-bonus [[10] [10] [5 2]])))))
