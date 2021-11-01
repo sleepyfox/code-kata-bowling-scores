@@ -26,7 +26,13 @@
     (let [open-frame [2 3]
           spare-frame [2 8]
           spare-game (concat [spare-frame] (repeat 9 open-frame))]
-      (is (= (+ 45 10 2) (score-game spare-game))))))
+      (is (= (+ 45 10 2) (score-game spare-game)))))
+
+  (testing "A game with a strike scores 60"
+    (let [open-frame [2 3]
+          strike-frame [10]
+          strike-game (concat [strike-frame] (repeat 9 open-frame))]
+      (is (= (+ 45 10 5) (score-game strike-game))))))
 
 (deftest checking-for-spare-frame
   (testing "A frame where the player leaves pins standing is not a spare"

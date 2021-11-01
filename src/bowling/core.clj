@@ -42,11 +42,10 @@
     0))
 
 (defn score-spare-bonus
-  "extra score for rolling a spare in a frame is the next roll"
+  "total extra score for rolling a spares"
   [game]
-  (let [next-frame (conj (vec (rest game)) [0 0])
+  (let [next-frame (conj (vec (rest game)) [0 0]) ;; shiftleft game
         combined (partition 2 (interleave game next-frame))]
-
     (->> combined
          (map spare-bonus)
          (reduce +))))
@@ -61,8 +60,19 @@
        (nth (flatten [b c]) 1))
     0))
 
+(defn score-strike-bonus
+  "total extra score for rolling strikes"
+  [game]
+  (let [next-frame (conj (vec (rest game)) [0 0]) ;; shiftleft game
+        next-next-frame (conj (vec (rest next-frame)) [0 0]) ;; shiftleft next-frame
+        combined (partition 3 (interleave game next-frame next-next-frame))]
+    (->> combined
+         (map strike-bonus)
+         (reduce +))))
+
 (defn score-game
   "Score the basic game plus spare bonus rolls"
   [game]
   (+ (score-basic-game game)
-     (score-spare-bonus game)))
+     (score-spare-bonus game)
+     (score-strike-bonus game)))
