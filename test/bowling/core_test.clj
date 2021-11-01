@@ -72,3 +72,13 @@
     (is (= 6 (strike-bonus [[10] [2 4] [5 5]]))))
   (testing "A frame with two strikes gets the strike and the next normal roll"
     (is (= 15 (strike-bonus [[10] [10] [5 2]])))))
+
+(deftest acceptance-criteria
+  ;; Already have a gutter-game test
+  (testing "A typical game with spares and strikes scores 186"
+    (let [typical-game [[7 3][10][9 0][10][10][8 2][7 0][10][10][6 4 10]]]
+      (is (= 186 (score-game typical-game)))))
+
+  (testing "A perfect game scores 300"
+    (let [perfect-game (concat (repeat 9 [10]) [[10 10 10]])]
+      (is (= 300 (score-game perfect-game))))))
